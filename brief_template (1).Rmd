@@ -1,0 +1,167 @@
+---
+title: "Briefing DV capstone"
+author: "`r Sys.info()[7]`"
+date: "`r Sys.Date()`"
+output: 
+ html_document:
+   toc: true
+   toc_float: true
+   highlight: zenburn
+   df_print: paged
+   theme: flatly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+File ini berisi template untuk mejawab pertanyaan 5W+1H saat briefing Capstone Data Visualization sebagai langkah awal sebelum membuat Dashboard. Silakan Bapak/Ibu mengisi jawaban di bawah. 
+
+File ini tidak akan dinilai namun Bapak/Ibu **WAJIB** disubmit ke dalam classroom pada hari H briefing Capstone Data Visualization.
+
+# What
+
+Tentukan tujuan atau informasi yang ingin ditampilkan dalam dashboard
+
+**Jawab**
+
+Tujuan yang ingin dicapai atau informasi yang ingin disampaikan:
+
+- Ingin memberitahu betapa parahnya situasi plastic waste yang ada di dunia.
+- Ingin memberitahu apa yang menyebabkan begitu parahnya kondisi plastic waste yang ada di dunia.
+- Ingin memberitahu apa dampak dari banyaknya plastic waste, terutama pada lautan yang terpolusi.
+
+# Who
+
+Untuk siapa dashboard ini dibuat? Siapa target pembaca dari dashboard ini?
+
+**Jawab**
+
+- publik
+
+# Why
+
+Apakah data yang dibuat relevan atau sesuai dengan tujuan? Mengapa?
+
+**Jawab**
+
+Data yang diperoleh dapat menjawab semua tujuan yang ingin disampaikan karena data bisa menyimpulkan insight yang ingin diketahui.
+
+# When
+
+Apakah data yang digunakan masih *up to date* atau masih relevan dengan kondisi sekarang? Apakah ada informasi tentang tanggal update terakhir dari data tersebut?
+
+**Jawab**
+
+Tgl terakhir 2015. Karena masih 5 tahun terakhir, masih relevan.
+
+
+# How
+
+Bagaimana Bapak/Ibu menggunakan visualisasi untuk menjawab tujuan yang telah disebutkan? 
+
+Buat plot yang akan dimasukkan ke dalam dashboard. Boleh dalam bentuk `ggplot` maupun `plotly`.
+
+**Jawab**
+
+Plot untuk menjawab tujuan pertama
+```{r}
+library(tidyverse)
+
+plasticprod <- read_csv("global-plastics-production.csv")
+
+plasticprod %>% 
+  is.na() %>% 
+  colSums()
+
+plasticprod_new <- plasticprod %>% 
+  group_by(Year) %>% 
+  summarise(sum_ton = sum(`Global plastics production`))
+
+ggplot(data = plasticprod_new, mapping = aes(x = reorder(Year,-sum_ton), y = sum_ton, text = paste("Year:", Year, "<br>", "Amount of plastic produced:", sum_ton))) +
+        geom_col(aes(fill = sum_ton)) +
+        scale_fill_viridis_c() +
+        labs(x = "Year", y = "Total amount of plastic produced") +
+        coord_flip() +
+        theme_minimal() +
+        theme(legend.position = "none")
+```
+
+Plot kedua
+```{r}
+
+gdpmis <- read_csv(file="per-capita-mismanaged-plastic-waste-vs-gdp-per-capita.csv")
+
+gdpmis <- gdpmis %>% 
+  select(-Code)
+
+gdp2010 <- gdpmis %>% 
+  filter(Year == 2010)
+
+gdp2010 %>% 
+  is.na() %>% 
+  colSums
+
+gdp2010new <- gdp2010 %>% 
+  mutate(`Mismanaged plastic waste per capita (kilograms per person per day)` = replace_na(`Mismanaged plastic waste per capita (kilograms per person per day)`, replace = mean(`Mismanaged plastic waste per capita (kilograms per person per day)`, na.rm = T)))
+
+gdpnew <- gdp2010new %>% 
+  mutate(`GDP per capita (int.-$) (international-$)` = replace_na(`GDP per capita (int.-$) (international-$)`, replace = mean(`GDP per capita (int.-$) (international-$)`, na.rm = T)))
+
+gdp_new <- gdpnew %>% 
+  mutate(Population = replace_na(Population, replace = mean(Population, na.rm = T)))
+
+gdp_newnew <- gdp_new %>% 
+  mutate(Mismanaged = gdp_new$`Mismanaged plastic waste per capita (kilograms per person per day)`)
+
+gdp_newnewnew <- gdp_newnew %>% 
+  mutate(GDP = gdp_newnew$`GDP per capita (int.-$) (international-$)`)
+
+ggplot(data = gdp_newnewnew, mapping = aes(x = Mismanaged, y = GDP)) +
+      geom_jitter(aes(color = Entity)) +
+      geom_smooth(method = "lm") +
+      theme_minimal() +
+      labs(x = "Mismanaged plastic waste per capita", y = "GDP per capita") +
+      theme(legend.position = "none") 
+```
+
+Plot ketiga
+```{r}
+macromicro <- read_csv(file = "macromicroplastics-in-ocean.csv")
+
+macromicro <- macromicro %>% 
+  select(-Code)
+
+ggplot(data = macromicro, mapping = aes(x = Year, y = `Macroplastics (>0.5cm) (tonnes)`, text = paste("Year:", Year, "<br>", "Amount of Macroplastics:", paste0(`Macroplastics (>0.5cm) (tonnes)`, " tonnes"), "<br>", Entity))) +
+        geom_line(aes(color = Entity), group = 1) +
+        labs(x = "Year", "Amount of Macroplastics") +
+        theme_minimal()
+```
+
+Buat chunk baru apabila ada lebih dari 3 plot.
+
+# Where
+
+Bagaimana desain layout atau tata letak dashboard yang akan dibuat?
+
+**Jawab**
+
+Contoh penulisan layout. 
+
+Tab atau halaman pertama
+
+- Problem:
+- Plastic produced 
+- Plastic inadequately managed
+
+Tab atau halaman kedua
+
+- Causes:
+- Low GDP
+- Handling issues
+
+Tab atau halaman ketiga
+
+- Impact:
+- Ocean
+- Coral reefs
