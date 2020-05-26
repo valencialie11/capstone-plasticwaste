@@ -160,7 +160,7 @@ function(input, output) {
   output$leaflet <- renderLeaflet({
    
     ico <- makeIcon(
-      iconUrl = "water-bottle-png-image-39990-1700.png",
+      iconUrl = "images/water-bottle-png-image-39990-1700.png",
       iconWidth= 20, iconHeight=20
     )
     
