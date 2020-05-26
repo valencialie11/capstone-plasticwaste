@@ -11,6 +11,7 @@ It was definitely a difficult task but very rewarding because I was able to lear
 - lubridate
 - DT
 - leaflet
+- readxl
 
 I'm definitely going to make another interactive dashboard when I'm free just because it's very fun! 
 See you~
