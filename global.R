@@ -8,7 +8,7 @@ library(DT)
 library(leaflet)
 library(readxl)
 
-plasticprodx <- read_csv( "global-plastics-production.csv")
+plasticprod <- read_csv("data/global-plastics-production.csv")
 
 plasticprod %>% 
   is.na() %>% 
@@ -18,7 +18,7 @@ str(plasticprod)
 
 plasticprod
 
-inadequately_managed <- read_csv("inadequately-managed-plastic.csv")
+inadequately_managed <- read_csv("data/inadequately-managed-plastic.csv")
 
 inadequately_managed %>% 
   is.na() %>% 
@@ -48,8 +48,8 @@ inadeq <- inadequately_managed %>%
 inadequately_managed
 inadequately_managed[order(inadequately_managed$remain),]
 
-gdpmis <- read_csv(file="per-capita-mismanaged-plastic-waste-vs-gdp-per-capita.csv")
-gdpplas <-  read_csv(file ="per-capita-plastic-waste-vs-gdp-per-capita.csv")
+gdpmis <- read_csv(file="data/per-capita-mismanaged-plastic-waste-vs-gdp-per-capita.csv")
+gdpplas <-  read_csv(file ="data/per-capita-plastic-waste-vs-gdp-per-capita.csv")
 
 gdpmis
 
@@ -99,7 +99,7 @@ gdp_newnew <- gdp_new %>%
 gdp_newnewnew <- gdp_newnew %>% 
   mutate(GDP = gdp_newnew$`GDP per capita (int.-$) (international-$)`)
 
-fate <- read_csv(file = "global-plastic-fate.csv")
+fate <- read_csv(file = "data/global-plastic-fate.csv")
 
 fate %>% 
   is.na() %>% 
@@ -126,13 +126,13 @@ fateR <- fatenews %>%
 
 fateR
 
-macromicro <- read_csv(file = "macromicroplastics-in-ocean.csv")
+macromicro <- read_csv(file = "data/macromicroplastics-in-ocean.csv")
 
 macromicro <- macromicro %>% 
   select(-Code)
 macromicro
 
-surface <- read_csv(file = "surface-plastic-mass-by-ocean.csv")
+surface <- read_csv(file = "data/surface-plastic-mass-by-ocean.csv")
 
 surfacenew <- surface %>% 
   mutate(latitude = case_when(surface$Entity == "Indian Ocean" ~ -33.137551,
@@ -163,7 +163,7 @@ surfacenewnewnew$longtitude <- as.numeric(surfacenewnewnew$longtitude)
 surf <- surfacenewest[1,]
 
 surfacenewest
-raw <- read_excel("Raw data.xlsx")
+raw <- read_excel("data/Raw data.xlsx")
 
 rawcontrol <- raw %>% 
   filter(tank == 1, time == 4, col == "A")
